@@ -1,0 +1,37 @@
+    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>localhost:9600</destination>
+
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <mdc/> <!-- MDC variables on the Thread will be written as JSON fields--> 
+                <context/> <!--Outputs entries from logback's context -->                               
+                <version/> <!-- Logstash json format version, the @version field in the output-->
+                <logLevel/>
+                <loggerName/>
+
+                <pattern>
+                 <pattern> <!-- we can add some custom fields to be sent with all the log entries.  -->                
+                    {      <!--make filtering easier in Logstash-->
+                    "appName": "elk-testdata",<!--or searching with Kibana-->
+                    "appVersion": "1.0"
+                    }
+                 </pattern>
+                </pattern>
+
+                <threadName/>
+                <message/>
+
+                <logstashMarkers/> <!-- Useful so we can add extra information for specific log lines as Markers--> 
+                <arguments/> <!--or through StructuredArguments-->
+
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- Our logger writes to file, console and sends the data to Logstash -->
+    <logger name="ro.fortsoft.elk.testdata" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="STASH"/>
+    </logger> 
